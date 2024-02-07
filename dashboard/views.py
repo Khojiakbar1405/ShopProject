@@ -199,3 +199,69 @@ def product_update(request, id):
 def product_delete(request, id):
     models.Product.objects.get(id=id).delete()
     return redirect('dashboard:product')
+
+
+# def enter_product(request):
+#     form = {}
+#     if request.method == 'POST':
+#         form = models.EnterProduct(request.POST)
+#         if form.is_valid():
+#             # EnterProduct obyektini saqlash
+#             enter_product_instance = form.save(commit=False)
+#             enter_product_instance.save()
+#             # Product obyektini yangilash
+#             product_instance = enter_product_instance.product
+#             product_instance.quantity += enter_product_instance.quantity
+#             product_instance.save()
+            
+#             return redirect('dashboard:product')
+
+#     return render(request, 'dashboard/enter/enter_product.html', {'form':form})
+
+
+def enter_product(request):
+    form = {}
+    if request.method == 'POST':
+        if form.is_valid():
+            enter_product_instance = form.save(commit=False)
+            enter_product_instance.product.quantity += enter_product_instance.quantity
+            enter_product_instance.product.save()
+            enter_product_instance.save()
+            return redirect('dashboard:product')
+    
+    return render(request, 'dashboard/enter/enter_product.html', {'form': form})
+
+def enter(request):
+    product = models.Product.objects.all()
+    context = {
+        'product':product
+    }
+    return render(request, 'dashboard/enter/list.html', context)
+
+
+def enter_update(request, id):
+    product = models.Product.objects.get(id=id)
+    if request.method == 'POST':
+        category = models.Category.objects.get(id=request.POST['category_id'])
+        product.name = request.POST['name']
+        product.description = request.POST['description']
+        product.quantity = request.POST['quantity']
+        product.price = request.POST['price']
+        product.currency = request.POST['currency']
+        # product.discount_price = request.POST['discount_price']
+        product.category=category
+        baner_image = request.FILES.get('product_image')
+        if baner_image:
+            product.baner_image = baner_image
+        product.save()
+
+    context = {
+        'product':product,
+        'categorys':models.Category.objects.all(),
+    }
+    return render(request, 'dashboard/enter/update.html', context)
+
+
+def enter_delete(request, id):
+    models.Product.objects.get(id=id).delete()
+    return redirect('dashboard:product')

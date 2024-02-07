@@ -49,16 +49,43 @@ class Product(models.Model):
     @property 
     def is_active(self):
         return self.quantity > 0
+    
 
+    def increment_quantity(self, amount):
+        self.quantity += amount
+        self.save()
 
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
 
+
+
 class WishList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        object = WishList.objects.filter(
+            user=self.user,
+            product=self.product
+            )
+        if object.count() == 0:
+            super(WishList, self).save(*args, **kwargs)
+        else:
+            raise ValueError
+        
+        # if self.pk:
+        #     print(222)
+        # else:
+        #     print(111)
+
+        super(WishList, self).save(*args, **kwargs)
+    
+    def delete(self, *args, **kargs):
+        ...
+        super(WishList, self).delete(*args, **kargs)
 
 
 class ProductReview(models.Model):
@@ -99,3 +126,13 @@ class CartProduct(models.Model):
         else:
             result = self.product.price * self.quantity
         return result
+
+
+class EnterProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.product.quantity += self.quantity
+        self.product.save()
+        super().save(*args, **kwargs)
