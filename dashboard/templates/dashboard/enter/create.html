@@ -530,8 +530,8 @@
 												<div class="tab-pane active" id="side9">
 													<ul class="sidemenu-list">
                                                         <li class="side-menu-label1"><a href="javascript:void(0)">Pages</a></li>
-                                                        <li><a href="{% url 'dashboard:enter' %}" class="slide-item"> Ro`yxat</a></li>
-                                                        <li><a href="{% url 'dashboard:enter_product' %}" class="slide-item"> Yaratish</a></li>
+                                                        <li><a href="{% url 'dashboard:list_enter' %}" class="slide-item"> Ro`yxat</a></li>
+                                                        <li><a href="{% url 'dashboard:create_enter' %}" class="slide-item"> Yaratish</a></li>
                                                     </ul>
                                                     <div class="menutabs-content mt-5 p-0">
                                                         <div class="Annoucement_card">
@@ -717,10 +717,10 @@
                             <div class="card-body pb-2">
                                 <div class="row row-sm">
                                     <div class="form-group">
-                                        <label>Categoriyalar</label>
-                                        <select class="form-control select2" name="category_id">
-                                            {% for item in products %}
-                                            <option value="{{item.id}}">{{item.name}}</option>
+                                        <label>Maxsulotlar</label>
+                                        <select class="form-control select2" name="product_id">
+                                            {% for product in products %}
+                                            <option value="{{product.id}}">{{product.name}}</option>
                                             {% endfor %}
                                         </select>
                                         <label>Miqdor</label>

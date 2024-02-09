@@ -17,8 +17,16 @@ urlpatterns = [
     path('dashboard/product/update/<int:id>/', views.product_update, name='product_update'),
     path('dashboard/product/delete/<int:id>/', views.product_delete, name='product_delete'),
     # enter
-    path('dashboard/enter/enter_product/', views.enter_product, name='enter_product'),
-    path('dashboard/enter/list/', views.enter, name='enter'),
-    path('dashboard/enter/update/<int:id>/', views.enter_update, name='enter_update'),
-    path('dashboard/enter/delete/<int:id>/', views.enter_delete, name='enter_delete'),
+    # path('dashboard/enter/create/', views.create_enter, name='enter_product'),
+    # path('dashboard/enter/list/', views.list_enter, name='enter'),
+    # path('dashboard/enter/update/<int:id>/', views.update_enter, name='enter_update'),
+    # path('dashboard/enter/delete/<int:id>/', views.delete_enter, name='enter_delete'),
+    # enters
+    path('enter-list/', views.list_enter, name='list_enter'),
+    path('enter-create/', views.create_enter, name='create_enter'),
+    path('enter-update/<int:id>/', views.update_enter, name='update_enter'),
+    path('enter-delete/<int:id>/', views.delete_enter, name='delete_enter'),
+    # print to excel
+    path('print_to_excel/', views.print_to_excel, name='print_to_excel'),
+    path('print_to_excel_project/', views.print_to_excel_project, name='print_to_excel_project'),
 ]
