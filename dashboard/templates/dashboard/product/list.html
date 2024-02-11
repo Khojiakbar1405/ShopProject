@@ -532,6 +532,7 @@
                                                         <li class="side-menu-label1"><a href="javascript:void(0)">Pages</a></li>
                                                         <li><a href="{% url 'dashboard:list_enter' %}" class="slide-item"> Ro`yxat</a></li>
                                                         <li><a href="{% url 'dashboard:create_enter' %}" class="slide-item"> Yaratish</a></li>
+                                                        <li><a href="{% url 'dashboard:upload_and_display' %}" class="slide-item"> Fayl yuklash</a></li>
                                                     </ul>
                                                     <div class="menutabs-content mt-5 p-0">
                                                         <div class="Annoucement_card">
@@ -701,6 +702,13 @@
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
                             <h1 class="page-title">Products</h1>
+                            <form method="get" class="d-flex">
+                                <label for="name">Maxsulot nomi</label>
+                                <input class="form-control" type="text" name="product_name" id="name" required>
+                                <label for="quantity">Miqdor</label>
+                                <input class="form-control" type="number" name="quantity" id="quantity" required>
+                                <button type="submit" class="btn btn-success w-50 ms-1" >Filter</button>
+                            </form>
                             <a href="{% url 'dashboard:print_to_excel_project' %}"> <button class="btn btn-primary" style="width: 120%;"> 
                                 Excel generate
                                 <h4><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-file-earmark-arrow-down-fill" viewBox="0 0 16 16">
@@ -731,6 +739,7 @@
                                                         <th>O`zartirish</th>
                                                         <th>O`chirish</th>
                                                         <th>Kirim</th>
+                                                        <th>Detail</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -745,6 +754,7 @@
                                                         <td><a href="{% url 'dashboard:product_update' item.id %}" class="btn btn-icon  btn-success" style="color: white;"><i class="fa fa-arrow-right"></i></a></td>
                                                         <td><a href="{% url 'dashboard:product_delete' item.id %}" class="btn btn-icon  btn-danger"><i class="fe fe-trash"></i></a></td>
                                                         <td><button data-bs-target="#modalcreate{{item.id}}" data-bs-toggle="modal" href="javascript:void(0)" class="btn btn-primary">Qo`shish</button></td>
+                                                        <td><a href="{% url 'dashboard:product_detail' item.id %}" class="btn btn-icon  btn-success" style="color: white;"><i class="fa fa-arrow-right"></i></a></td>
                                                     </tr>
                                                     {% endfor %}
                                                 </tbody>

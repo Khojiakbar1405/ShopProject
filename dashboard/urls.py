@@ -16,6 +16,7 @@ urlpatterns = [
     path('dashboard/product/list/', views.product, name='product'),
     path('dashboard/product/update/<int:id>/', views.product_update, name='product_update'),
     path('dashboard/product/delete/<int:id>/', views.product_delete, name='product_delete'),
+    path('dashboard/product_detail/list/<int:id>/', views.product_detail, name='product_detail'),
     # enter
     # path('dashboard/enter/create/', views.create_enter, name='enter_product'),
     # path('dashboard/enter/list/', views.list_enter, name='enter'),
@@ -29,4 +30,5 @@ urlpatterns = [
     # print to excel
     path('print_to_excel/', views.print_to_excel, name='print_to_excel'),
     path('print_to_excel_project/', views.print_to_excel_project, name='print_to_excel_project'),
+    path('upload_and_display/', views.upload_and_display, name='upload_and_display'),
 ]

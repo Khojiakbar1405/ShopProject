@@ -704,21 +704,7 @@
 
                 <!-- PAGE-HEADER -->
                 <div class="page-header">
-                    <h1 style="height: 150px; width: 20px;" >Maxsulotlar</h1>
-                    <form method="get" class="d-flex">
-                        <label for="name">Maxsulot nomi</label>
-                        <input class="form-control" type="text" name="name" id="name" required>
-                        <label for="quantity">Miqdor</label>
-                        <input class="form-control" type="number" name="quantity" id="quantity" required>
-                        <label for="created_at">Sana</label>
-                        <input class="form-control" type="datetime-local" name="created_at" id="created_at" required>
-                        <button type="submit" class="btn btn-success w-50 ms-1" >Filter</button>
-                    </form>
-                    <a href="{% url 'dashboard:print_to_excel' %}"> <button class="btn btn-primary" style="width: 120%;"> 
-                    Excel generate
-                    <h4><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-file-earmark-arrow-down-fill" viewBox="0 0 16 16">
-                        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1m-1 4v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 11.293V7.5a.5.5 0 0 1 1 0"/>
-                    </svg></h4></button></a>
+                    <h1 class="page-title">Fayl yuklash</h1>
                 </div>
                 <!-- PAGE-HEADER END -->
                 
@@ -726,49 +712,10 @@
                 <div class="row">
                     <div class="col-2"></div>
                     <div class="col-xl-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Kirimlar ro`yxati</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table text-nowrap text-md-nowrap mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>№</th>
-                                                <th>Maxsulot nomi</th>
-                                                <th>Soni</th>
-                                                <th>Sana</th>
-                                                <th>O`zgartirish</th>
-                                                <th>O`chirish</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for enter in enters %}
-                                            <tr>
-                                                <td>{{forloop.counter}}</td>
-                                                {% if enter.product %}
-                                                <td>{{enter.product.name}}</td>
-                                                {% else %}
-                                                <td>{{enter.product_name}}</td>
-                                                {% endif %}
-                                                <td>{{enter.quantity}}</td>
-                                                <td>{{enter.created_at|date:'Y-m-d H:i'}}</td>
-                                                {% if enter.product %}
-                                                <td><button data-bs-target="#modalupdate{{enter.id}}" data-bs-toggle="modal" href="javascript:void(0)" class="btn btn-success">O'zgartirish</button></td>
-                                                {% else %}
-                                                <td><button class="btn btn-success">O'zgartirish</button></td>
-                                                {% endif %}
-                                                <td><button data-bs-target="#modaldelete{{enter.id}}" data-bs-toggle="modal" href="javascript:void(0)" class="btn btn-danger">O'chirish</button></td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
+                
                 <!-- End Row -->
                 {% for i in enters %}
                 <div class="modal fade" id="modalupdate{{i.id}}">
@@ -813,7 +760,14 @@
                 {% endfor %}
             </div>
             <!-- CONTAINER CLOSED -->
-
+            <div style="display: flex;" >
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="Fayl yuklash"> Fayl yuklash</label>
+                    <input type="file" name="fayl">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
 

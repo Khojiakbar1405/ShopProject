@@ -1,88 +1,3 @@
-# from django.shortcuts import render, redirect
-# from django.contrib.auth.models import User
-# from main import models
-
-
-# def dashboard(request):
-#     categorys = models.Category.objects.all()
-#     products = models.Product.objects.all()
-#     users = User.objects.all()
-#     context = {
-#         'categorys':categorys,
-#         'products':products,
-#         'users':users,
-#     }
-#     return render(request, 'dashboard/index.html', context)
-
-
-# def category_list(request):
-#     categorys = models.Category.objects.all()
-#     return render(request, 'category/list.html', {'categorys':categorys})
-
-
-# def category_detail(request, id):
-#     category = models.Category.objects.get(id=id)
-#     products = models.Product.objects.filter(category=category, is_active=True)
-#     context = {
-#         'category':category,
-#         'products':products
-#     }
-#     return render(request, 'category/list.html', context)
-
-
-# def category_update(request, id):
-#     category = models.Category.objects.get(id=id)
-#     category.name = request.POST['name']
-#     category.save()
-#     return redirect('category_detail', category.id)
-
-
-# def category_delete(request, id):
-#     category = models.Category.objects.get(id=id)
-#     category.delete()
-#     return redirect('category_list')
-
-
-
-
-# # products
-
-# def products(request):
-#     ...
-
-
-# def product_create(request):
-#     categorys = models.Category.objects.all()
-#     context = {
-#         'categorys':categorys
-#     }
-#     if request.method == "POST":
-#         name = request.POST['name']
-#         description = request.POST['description']
-#         quantity = request.POST['quantity']
-#         price = request.POST['price']
-#         currency = request.POST['currency']
-#         baner_image = request.FILES['baner_image']
-#         category_id = request.POST['category_id']
-#         images = request.FILES.getlist('images')
-#         product = models.Product.objects.create(
-#             name=name,
-#             description = description,
-#             quantity=quantity,
-#             price=price,
-#             currency=currency,
-#             baner_image=baner_image,
-#             category_id=category_id
-#         )
-#         for image in images:
-#             models.ProductImage.objects.create(
-#                 image=image,
-#                 product=product
-#             )
-
-#     return render(request, 'dashboard/products/create.html', context)
-
-
 import openpyxl
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
@@ -93,6 +8,10 @@ from openpyxl import Workbook
 from openpyxl.styles import NamedStyle
 from django.utils import timezone
 from datetime import datetime
+from django.db.models import Q
+import pandas as pd
+from main.models import EnterProduct, Product
+from openpyxl import load_workbook
 
 
 def dashboard(request):
@@ -173,9 +92,18 @@ def product_create(request):
 
 
 def product(request):
-    product = models.Product.objects.all()
+    # product = models.Product.objects.all()
+    name = request.GET.get('name')
+    quantity = request.GET.get('quantity')
+    if name and quantity:
+        product = models.Product.objects.filter(
+            product__name=name,
+            quantity=quantity,
+        )
+    else:
+        product = models.Product.objects.all()
     context = {
-        'product':product
+        'product':product,
     }
     return render(request, 'dashboard/product/list.html', context)
 
@@ -208,72 +136,6 @@ def product_delete(request, id):
     return redirect('dashboard:product')
 
 
-# def enter_product(request):
-#     form = {}
-#     if request.method == 'POST':
-#         form = models.EnterProduct(request.POST)
-#         if form.is_valid():
-#             # EnterProduct obyektini saqlash
-#             enter_product_instance = form.save(commit=False)
-#             enter_product_instance.save()
-#             # Product obyektini yangilash
-#             product_instance = enter_product_instance.product
-#             product_instance.quantity += enter_product_instance.quantity
-#             product_instance.save()
-            
-#             return redirect('dashboard:product')
-
-#     return render(request, 'dashboard/enter/enter_product.html', {'form':form})
-
-
-# def enter_product(request):
-#     form = {}
-#     if request.method == 'POST':
-#         if form.is_valid():
-#             enter_product_instance = form.save(commit=False)
-#             enter_product_instance.product.quantity += enter_product_instance.quantity
-#             enter_product_instance.product.save()
-#             enter_product_instance.save()
-#             return redirect('dashboard:product')
-    
-#     return render(request, 'dashboard/enter/enter_product.html', {'form': form})
-
-# def enter(request):
-#     product = models.Product.objects.all()
-#     context = {
-#         'product':product
-#     }
-#     return render(request, 'dashboard/enter/list.html', context)
-
-
-# def enter_update(request, id):
-#     product = models.Product.objects.get(id=id)
-#     if request.method == 'POST':
-#         category = models.Category.objects.get(id=request.POST['category_id'])
-#         product.name = request.POST['name']
-#         product.description = request.POST['description']
-#         product.quantity = request.POST['quantity']
-#         product.price = request.POST['price']
-#         product.currency = request.POST['currency']
-#         # product.discount_price = request.POST['discount_price']
-#         product.category=category
-#         baner_image = request.FILES.get('product_image')
-#         if baner_image:
-#             product.baner_image = baner_image
-#         product.save()
-
-#     context = {
-#         'product':product,
-#         'categorys':models.Category.objects.all(),
-#     }
-#     return render(request, 'dashboard/enter/update.html', context)
-
-
-# def enter_delete(request, id):
-#     models.Product.objects.get(id=id).delete()
-#     return redirect('dashboard:product')
-
-
 def create_enter(request):
     if request.method == 'POST':
         product_id = request.POST['product_id']
@@ -297,42 +159,44 @@ def update_enter(request, id):
 
 def delete_enter(request, id):
     models.EnterProduct.objects.get(id=id).delete()
-    return redirect('dashboard:list_enter')
+    return redirect('dashboard:list_enter') 
 
 
 def list_enter(request):
-    enters = models.EnterProduct.objects.all()
+    name = request.GET.get('name')
+    quantity = request.GET.get('quantity')
+    created_at = request.GET.get('created_at')
+    if name and quantity and created_at:
+        enters = models.EnterProduct.objects.filter(
+            product__name=name,
+            quantity=quantity,
+            created_at__gt = datetime.strptime(created_at, '%Y-%m-%dT%H:%M'),
+            created_at__lte = datetime.strptime(created_at, '%Y-%m-%dT%H:%M'),
+        )
+    else:
+        enters = models.EnterProduct.objects.all()
     context = {'enters':enters}
     return render(request, 'dashboard/enter/list.html', context)
 
 
 def print_to_excel(request):
     enters = models.EnterProduct.objects.all()
-    
-    # Create a new workbook
     wb = Workbook()
     ws = wb.active
     ws.title = "Enter Products"
-    
-    # Define headers
     headers = ['Product', 'Date', 'Quantity']
     for col_num, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col_num)
         cell.value = header
-    
-    # Apply date formatting style
     date_style = NamedStyle(name="datetime", number_format="YYYY-MM-DD HH:mm:ss")
-    ws.cell(row=1, column=2).style = date_style  # Apply the style to the 'Date' column
+    ws.cell(row=1, column=2).style = date_style  
     
-    # Write data to the worksheet
     for row_num, enter in enumerate(enters, 2):
         ws.cell(row=row_num, column=1).value = enter.product.name 
-        # Convert datetime to the local timezone and set tzinfo to None
         local_datetime = timezone.localtime(enter.created_at)
         ws.cell(row=row_num, column=2).value = local_datetime.replace(tzinfo=None)
         ws.cell(row=row_num, column=3).value = enter.quantity
         
-    # Adjust column widths
     for col in ws.columns:
         max_length = 0
         column = col[0].column_letter
@@ -344,14 +208,9 @@ def print_to_excel(request):
                 pass
         adjusted_width = (max_length + 2) * 1.2
         ws.column_dimensions[column].width = adjusted_width
-    
-    # Create the HTTP response with the Excel file as an attachment
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=enter_products.xlsx'
-    
-    # Save the workbook to the response
     wb.save(response)
-    
     return response
 
 def print_to_excel_project(request):
@@ -386,3 +245,42 @@ def print_to_excel_project(request):
     print(response)
     return response
 
+
+def product_detail(request, id):
+    product = models.Product.objects.get(id=id)
+    enters = models.EnterProduct.objects.filter(product=product)
+    products = models.Product.objects.get(id=id)
+    recomendation = models.Product.objects.filter(
+        category_id=product.category.id).exclude(id=product.id)[:3]
+    categorys = models.Category.objects.all()
+    images = models.Product.objects.filter(baner_image=product)
+
+    data = {
+        'product': product,
+        'enters': enters,
+        'images':images,
+        'categorys':categorys,
+        'products':products,
+        'recomendation':recomendation
+    }
+    return render(request, 'dashboard/product/product_detail.html', data)
+
+def upload_and_display(request):
+    if request.method == 'POST':
+        fayl = request.FILES['fayl']
+        workbook = load_workbook(fayl)
+        sheet = workbook.active
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            product_name, date, quantity = row
+
+            if quantity is None:
+                continue
+            product, created = Product.objects.get_or_create(name=product_name)
+
+            EnterProduct.objects.create(
+                product=product,
+                quantity=quantity,
+                created_at=date
+            )
+            return redirect('dashboard:list_enter') 
+    return render(request, 'dashboard/enter/excel_enter.html')

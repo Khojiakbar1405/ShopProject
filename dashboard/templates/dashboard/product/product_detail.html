@@ -685,6 +685,7 @@
 									</li>
 								</ul>
                             </li>
+                            
                         </ul>
                         <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
                                 width="24" height="24" viewBox="0 0 24 24">
@@ -704,16 +705,7 @@
 
                 <!-- PAGE-HEADER -->
                 <div class="page-header">
-                    <h1 style="height: 150px; width: 20px;" >Maxsulotlar</h1>
-                    <form method="get" class="d-flex">
-                        <label for="name">Maxsulot nomi</label>
-                        <input class="form-control" type="text" name="name" id="name" required>
-                        <label for="quantity">Miqdor</label>
-                        <input class="form-control" type="number" name="quantity" id="quantity" required>
-                        <label for="created_at">Sana</label>
-                        <input class="form-control" type="datetime-local" name="created_at" id="created_at" required>
-                        <button type="submit" class="btn btn-success w-50 ms-1" >Filter</button>
-                    </form>
+                    <h1 class="page-title">Maxsulotlar</h1>
                     <a href="{% url 'dashboard:print_to_excel' %}"> <button class="btn btn-primary" style="width: 120%;"> 
                     Excel generate
                     <h4><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-file-earmark-arrow-down-fill" viewBox="0 0 16 16">
@@ -721,7 +713,79 @@
                     </svg></h4></button></a>
                 </div>
                 <!-- PAGE-HEADER END -->
+                <div class="single contact">
+                    <div class="container">
+                        <div class="single-main">
+                            <div class="col-md-9 single-main-left">
+                            <div class="sngl-top">
+                                <div class="col-md-5 single-top-left">	
+                                        <div class="flexslider">
+                                            <ul class="slides">
+                                            {% for img in images %}
+                                              <li data-thumb="{{img.image.url}}">
+                                                  <div class="thumb-image"> <img src="{{img.image.url}}" data-imagezoom="true" class="img-responsive" alt=""/> </div>
+                                              </li>
+                                            {% endfor %}
+                                            </ul>
+                                      </div>
+                                    <!-- FlexSlider -->
+                                    <script src="{% static 'js/imagezoom.js' %}"></script>
+                                    <script defer="" src="{% static 'js/jquery.flexslider.js' %}"></script>
+                                    <link rel="stylesheet" href="{% static 'css/flexslider.css' %}" type="text/css" media="screen">
                 
+                                    <script>
+                                    // Can also be used with $(document).ready()
+                                    $(window).load(function() {
+                                      $('.flexslider').flexslider({
+                                        animation: "slide",
+                                        controlNav: "thumbnails"
+                                      });
+                                    });
+                                    </script>
+                                </div>	
+                                <div class="col-md-7 single-top-right">
+                                    <div class="single-para simpleCart_shelfItem">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <h2>{{products.name}}</h2>
+                                    </div>
+                                    
+                                        <div class="star-on">
+                                            <ul class="star-footer">
+                                                {% for _ in range %}
+                                                    <li><a href="#"><i> </i></a></li>
+                                                {% endfor %}
+                                                </ul>
+                                        <div class="clearfix"> </div>
+                                        </div>
+                                        
+                                        <h5 class="item_price"> {% if products.currency == 1 %} $ {{products.price}} {% else %} {{products.price}} so`m {% endif %}</h5>
+                                        <p>{{products.description}}</p>
+                                        
+                                    </div>
+                                </div>
+                                <div class="clearfix"> </div>
+                            </div>
+                            <div class="latestproducts">
+                                <div class="product-one">
+                                    {% for products in recomendation %}
+                                    <div class="col-md-4 product-left p-left"> 
+                                        <div class="product-main simpleCart_shelfItem">
+                                            <a href="{% url 'dashboard:product_detail' products.id %}" class="mask"><img class="img-responsive zoom-img" src="{{products.baner_image.url}}" alt=""></a>
+                                            <div class="product-bottom">
+                                                <h3>{{products.name}}</h3>
+                                                <h4><a class="item_add" href="#"><i></i></a> <span class=" item_price">{% if products.currency == 1 %} $ {{products.price}} {% else %} {{products.price}} so`m {% endif %}</span></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="clearfix"> </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Row -->
                 <div class="row">
                     <div class="col-2"></div>
