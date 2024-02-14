@@ -1,17 +1,19 @@
-import openpyxl
-from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.core.exceptions import FieldError
+import openpyxl
 from main import models
 from openpyxl import Workbook
 from openpyxl.styles import NamedStyle
-from django.utils import timezone
-from datetime import datetime
-from django.db.models import Q
-import pandas as pd
 from main.models import EnterProduct, Product
 from openpyxl import load_workbook
+
+
+from main import models
+from .funcs import search_with_fields, pagenator_page, search_with_fields_product
+
 
 
 def dashboard(request):
@@ -92,19 +94,14 @@ def product_create(request):
 
 
 def product(request):
-    # product = models.Product.objects.all()
-    name = request.GET.get('name')
-    quantity = request.GET.get('quantity')
-    if name and quantity:
-        product = models.Product.objects.filter(
-            product__name=name,
-            quantity=quantity,
-        )
-    else:
-        product = models.Product.objects.all()
-    context = {
-        'product':product,
-    }
+    result = search_with_fields_product(request)
+    try: 
+        product = models.Product.objects.filter(**result)
+    except FieldError as err:
+        del result[err.__doc__.split()[3][1:-1]]
+        product = models.Product.objects.filter(**result)
+        
+    context = {'product': pagenator_page(product, 10, request)}
     return render(request, 'dashboard/product/list.html', context)
 
 
@@ -163,19 +160,14 @@ def delete_enter(request, id):
 
 
 def list_enter(request):
-    name = request.GET.get('name')
-    quantity = request.GET.get('quantity')
-    created_at = request.GET.get('created_at')
-    if name and quantity and created_at:
-        enters = models.EnterProduct.objects.filter(
-            product__name=name,
-            quantity=quantity,
-            created_at__gt = datetime.strptime(created_at, '%Y-%m-%dT%H:%M'),
-            created_at__lte = datetime.strptime(created_at, '%Y-%m-%dT%H:%M'),
-        )
-    else:
-        enters = models.EnterProduct.objects.all()
-    context = {'enters':enters}
+    result = search_with_fields(request)
+    try: 
+        enters = models.EnterProduct.objects.filter(**result)
+    except FieldError as err:
+        del result[err.__doc__.split()[3][1:-1]]
+        enters = models.EnterProduct.objects.filter(**result)
+        
+    context = {'enters': pagenator_page(enters, 10, request)}
     return render(request, 'dashboard/enter/list.html', context)
 
 
