@@ -3,14 +3,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import FieldError
+
 import openpyxl
-from main import models
 from openpyxl import Workbook
 from openpyxl.styles import NamedStyle
-from main.models import EnterProduct, Product
 from openpyxl import load_workbook
 
-
+from main.models import EnterProduct, Product
+from main import models
 from main import models
 from .funcs import search_with_fields, pagenator_page, search_with_fields_product
 
@@ -161,10 +161,12 @@ def delete_enter(request, id):
 
 def list_enter(request):
     result = search_with_fields(request)
+    print(result)
     try: 
         enters = models.EnterProduct.objects.filter(**result)
     except FieldError as err:
-        del result[err.__doc__.split()[3][1:-1]]
+        del result['page']
+
         enters = models.EnterProduct.objects.filter(**result)
         
     context = {'enters': pagenator_page(enters, 10, request)}
