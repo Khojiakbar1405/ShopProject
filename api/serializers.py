@@ -1,51 +1,92 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.generics import CreateAPIView, DestroyAPIView
+from rest_framework import serializers
 from main import models 
 
-class ListProductSerializer(ModelSerializer):
+
+#  Product uchun
+class ListProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
-        fields = '__all__'
-        # fields = ['id', 'name']
+        fields = ['id', 'name']
         # exclude = ['id',]
 
 
-class ListCategorySerializer(ModelSerializer):
+class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Category
-        fields = '__all__'
+        model = models.Product
+        fields = ['name', 'description', 'price', 'quantity', 'currency', 'discount_price', 'baner_image', 'category']
 
 
-class ListProductImageSerializer(ModelSerializer):
+class DetailProductSerilaizer(serializers.ModelSerializer):
+    # category = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    category = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    class Meta:
+        model = models.Product
+        depth = 1
+        fields = ['name', 'description', 'price',
+                   'quantity', 'currency', 'discount_price',
+                    'baner_image', 'category', 'review',
+                    'is_discount', 'is_active']
+
+
+class ListProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProductImage
         fields = '__all__'
 
 
-class ListWishListSerializer(ModelSerializer):
+# Category uchun
+class ListCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Category
+        fields = '__all__'
+
+
+
+
+class ListWishListSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WishList
         fields = '__all__'
 
 
-class ListProductReviewSerializer(ModelSerializer):
+class CreateWishListView(CreateAPIView):
+    serializer_class = ListWishListSerializer
+
+
+class DeleteWishListView(DestroyAPIView):
+    queryset = models.WishList.objects.all()
+    serializer_class = ListWishListSerializer
+
+
+class ListProductReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProductReview
         fields = '__all__'
 
 
-class ListCartSerializer(ModelSerializer):
+class CreateReviewView(CreateAPIView):
+    serializer_class = ListProductReviewSerializer
+
+
+class DeleteReviewView(DestroyAPIView):
+    queryset = models.ProductReview.objects.all()
+    serializer_class = ListProductReviewSerializer
+
+
+class ListCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cart
         fields = '__all__'
 
 
-class ListCartProductSerializer(ModelSerializer):
+class ListCartProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CartProduct
         fields = '__all__'
 
 
-class ListEnterProductSerializer(ModelSerializer):
+class ListEnterProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EnterProduct
         fields = '__all__'
