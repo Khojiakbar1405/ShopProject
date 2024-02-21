@@ -17,8 +17,15 @@ class CreateProductSerializer(serializers.ModelSerializer):
         fields = ['name', 'description', 'price', 'quantity', 'currency', 'discount_price', 'baner_image', 'category']
 
 
+class ImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductImage
+        fields = ['image', ]
+
+
 class DetailProductSerilaizer(serializers.ModelSerializer):
     # category = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    images = ImagesSerializer(many=True, read_only=True)
     category = serializers.SlugRelatedField(slug_field='name', read_only=True)
     class Meta:
         model = models.Product
@@ -26,7 +33,10 @@ class DetailProductSerilaizer(serializers.ModelSerializer):
         fields = ['name', 'description', 'price',
                    'quantity', 'currency', 'discount_price',
                     'baner_image', 'category', 'review',
-                    'is_discount', 'is_active']
+                    'is_discount', 'is_active', 'images']
+
+
+
 
 
 class ListProductImageSerializer(serializers.ModelSerializer):

@@ -1,16 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User
 from functools import reduce
+import slug
+from unidecode import unidecode
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        self.slug = slug.slug(unidecode(self.name, 'UTC-8'))
+        super(Category, self).save(*args, **kwargs)
 
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
+    slug = models.SlugField(blank=True)
     description = models.TextField()
     quantity = models.IntegerField()
     price = models.DecimalField(decimal_places=2, max_digits=10)
@@ -28,6 +36,14 @@ class Product(models.Model):
         )
     baner_image = models.ImageField(upload_to='baner/')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        self.slug = slug.slug(unidecode(self.name, 'UTC-8'))
+        super(Product, self).save(*args, **kwargs)
 
 
     @property
@@ -55,10 +71,14 @@ class Product(models.Model):
         self.quantity += amount
         self.save()
 
+    @property 
+    def images(self):
+        images = ProductImage.objects.filter(product_id=self.id)
+        return images
+
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,) # releted_name='images'
 
 
 
